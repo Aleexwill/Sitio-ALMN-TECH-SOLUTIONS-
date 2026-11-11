@@ -1,6 +1,6 @@
-# ALMN TECH & SOLUTIONS
+# ALMN PROJECTS
 
-Sitio institucional en español con dos ambientes visuales, profundidad interactiva y adaptación móvil. Las imágenes de marca fueron proporcionadas por el propietario.
+Sitio de soluciones tecnológicas en español. El recorrido de la página es un circuito de información: entrada → señal → procesamiento → flujo → salida → conexión, con una pista que se energiza al hacer scroll.
 
 ## Desarrollo
 
@@ -11,7 +11,9 @@ npm run dev
 
 npm run build
 
-Contenido inicial de presentación. Los servicios concretos y los datos de contacto se incorporarán cuando el propietario los defina.
+## Contenido
+
+Textos, servicios y datos de contacto se editan en `lib/site.ts`. El formulario de contacto se activa al completar `contact.email` o `contact.whatsapp`.
 
 ## Vercel
 
