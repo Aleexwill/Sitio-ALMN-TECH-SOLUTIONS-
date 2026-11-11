@@ -1,23 +1,203 @@
-'use client';
-import { useRef, useState, type PointerEvent } from 'react';
-import { ArrowUpRight, ArrowDown, Cpu, Leaf, Layers3 } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-const dimensions = [
- { id:'tech', number:'01', label:'Tecnología', icon:Cpu, image:'/almn-tech.jpeg', alt:'Logo ALMN TECH & SOLUTIONS sobre circuitos azules', eyebrow:'IDEAS QUE TOMAN OTRA DIMENSIÓN', title:<>El siguiente nivel<br/>empieza <em>contigo.</em></>, text:'Tecnología, ideas y soluciones para dar forma a lo que viene.', caption:'Conectamos ideas. Creamos posibilidades.', tag:'TECH & SOLUTIONS' },
- { id:'future', number:'02', label:'Futuro', icon:Leaf, image:'/almn-future.jpeg', alt:'Visión de ALMN: una ciudad tecnológica rodeada de naturaleza', eyebrow:'UNA NUEVA FORMA DE IMAGINAR', title:<>El futuro se piensa<br/>en <em>verde.</em></>, text:'Una visión donde la innovación y el entorno forman parte de la misma conversación.', caption:'Imaginamos un mañana más conectado.', tag:'VISIÓN DE FUTURO' }
-];
-export default function Home(){
- const [dimension,setDimension]=useState('tech');
- const stage=useRef<HTMLDivElement>(null);
- function move(e:PointerEvent<HTMLDivElement>){if(e.pointerType!=='mouse'||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const b=e.currentTarget.getBoundingClientRect();stage.current?.style.setProperty('--rx',`${((e.clientY-b.top)/b.height-.5)*-5}deg`);stage.current?.style.setProperty('--ry',`${((e.clientX-b.left)/b.width-.5)*7}deg`)}
- function reset(){stage.current?.style.setProperty('--rx','0deg');stage.current?.style.setProperty('--ry','0deg')}
- return <div className={`site dimension-${dimension}`}>
- <a className="skip-link" href="#inicio">Ir al contenido</a>
- <header className="header"><a className="wordmark" href="#inicio" aria-label="ALMN TECH & SOLUTIONS, inicio"><span>ALMN<span className="brand-dot">.</span></span><small>TECH & SOLUTIONS</small></a><nav aria-label="Navegación principal"><a href="#inicio">Inicio</a><a href="#universo">Nuestro universo</a><a className="nav-link" href="#vision">La visión <ArrowUpRight size={16}/></a></nav></header>
- <main id="inicio"><Tabs value={dimension} onValueChange={v=>setDimension(String(v))} className="dimension-tabs"><div className="hero" ref={stage} onPointerMove={move} onPointerLeave={reset}><div className="hero-grid" aria-hidden="true"/>
- {dimensions.map(item=><TabsContent key={item.id} value={item.id} className="dimension-panel"><div className="hero-copy"><p className="eyebrow"><span/>{item.eyebrow}</p><h1>{item.title}</h1><p className="intro">{item.text}</p><a className="explore" href="#universo">Explora nuestro universo <ArrowUpRight size={20}/></a></div><div className="visual-wrap"><div className="orbit orbit-one" aria-hidden="true"/><div className="orbit orbit-two" aria-hidden="true"/><div className="visual-frame"><img src={item.image} alt={item.alt} width="1280" height="714" fetchPriority={item.id==='tech'?'high':'auto'}/><div className="image-caption"><span className="status-dot"/>{item.tag}<span className="coordinate">ALMN / {item.number}</span></div></div><div className="floating-label"><Layers3 size={17}/><span>{item.caption}</span></div><span className="art-index" aria-hidden="true">/{item.number}</span></div></TabsContent>)}
- <div className="hero-bottom"><div><span className="control-label">ELIGE UNA DIMENSIÓN</span><TabsList className="dimension-picker" aria-label="Dimensión visual">{dimensions.map(item=><TabsTrigger key={item.id} value={item.id}><item.icon size={15}/>{item.label}<span>{item.number}</span></TabsTrigger>)}</TabsList></div><a className="scroll-link" href="#universo">Hay más por descubrir <ArrowDown size={17}/></a></div></div></Tabs>
- <section id="universo" className="universe"><div className="section-heading"><p className="eyebrow">01 / NUESTRO UNIVERSO</p><h2>Una idea.<br/><span>Muchas posibilidades.</span></h2><p>Somos ALMN TECH & SOLUTIONS.<br/>Un punto de encuentro entre tecnología, creatividad y una mirada hacia el futuro.</p></div><div className="principles"><article><span className="principle-number">01 —</span><Cpu/><h3>Tecnología</h3><p>Explorar lo que la tecnología puede hacer posible.</p></article><article><span className="principle-number">02 —</span><Layers3/><h3>Soluciones</h3><p>Convertir desafíos en ideas que tengan sentido.</p></article><article><span className="principle-number">03 —</span><Leaf/><h3>Futuro</h3><p>Pensar más allá de hoy, con una visión de mañana.</p></article></div></section>
- <section id="vision" className="vision"><img src="/almn-future.jpeg" alt="Ciudad futurista verde: la inspiración visual de ALMN" width="1280" height="714" loading="lazy"/><div className="vision-shade"/><div className="vision-copy"><p className="eyebrow">02 / NUESTRA VISIÓN</p><h2>Imagina lo que<br/>podemos crear.</h2><p>El futuro empieza con una nueva perspectiva.</p><a href="#inicio" className="vision-link">Vuelve a explorar <ArrowUpRight size={21}/></a></div><span className="vision-note">TECNOLOGÍA + IDEAS + FUTURO</span></section></main>
- <footer><a href="#inicio" className="footer-brand">ALMN <span>TECH & SOLUTIONS</span></a><p>Una nueva dimensión de posibilidades.</p><span>© {new Date().getFullYear()} ALMN</span></footer></div>
+import { ArrowDown, ArrowUpRight, Mail, MessageCircle } from 'lucide-react';
+import { CircuitRail } from '@/components/site/circuit-rail';
+import { ContactForm } from '@/components/site/contact-form';
+import { HeroBoard } from '@/components/site/hero-board';
+import { contact, outputs, signals, solutions, steps } from '@/lib/site';
+
+function Node({ index, label }: { index: string; label: string }) {
+  return (
+    <p className="eyebrow">
+      <span className="node" data-node aria-hidden="true" />
+      <span className="node-index">NODO {index}</span>
+      <span className="node-sep" aria-hidden="true">/</span>
+      {label}
+    </p>
+  );
+}
+
+export default function Home() {
+  return (
+    <>
+      <a className="skip-link" href="#contenido">
+        Ir al contenido
+      </a>
+
+      <header className="header">
+        <a href="#inicio" className="logo" aria-label="ALMN Projects, inicio">
+          <img src="/almn-projects-logo.png" alt="" width="397" height="143" />
+        </a>
+        <nav aria-label="Navegación principal">
+          <a href="#soluciones">Soluciones</a>
+          <a href="#metodo">Método</a>
+          <a href="#resultados">Resultados</a>
+          <a href="#contacto" className="btn btn-ghost">
+            Hablemos <ArrowUpRight size={16} />
+          </a>
+        </nav>
+      </header>
+
+      <main id="contenido" className="circuit">
+        <CircuitRail />
+
+        {/* 00 · ENTRADA */}
+        <section id="inicio" className="hero">
+          <div className="hero-copy">
+            <Node index="00" label="ENTRADA" />
+            <h1>
+              Conectamos cada parte de tu negocio en <em>un solo circuito.</em>
+            </h1>
+            <p className="lead">
+              Soluciones tecnológicas que hacen fluir la información: de la idea al sistema, del dato a la
+              decisión.
+            </p>
+            <div className="actions">
+              <a href="#senal" className="btn btn-primary">
+                Iniciar el recorrido <ArrowDown size={18} />
+              </a>
+              <a href="#soluciones" className="btn btn-ghost">
+                Ver soluciones
+              </a>
+            </div>
+            <p className="status">
+              <span className="status-led" /> SISTEMA EN LÍNEA · 6 NODOS · 6 MÓDULOS
+            </p>
+          </div>
+          <HeroBoard />
+        </section>
+
+        {/* 01 · SEÑAL */}
+        <section id="senal" className="block">
+          <Node index="01" label="SEÑAL" />
+          <div className="split">
+            <div>
+              <h2>Todo empieza con una señal.</h2>
+              <p className="lead">
+                Cada proyecto nace de algo que hoy no fluye como debería. Lo detectamos antes de escribir una
+                sola línea de código.
+              </p>
+            </div>
+            <ul className="signals">
+              {signals.map((s) => (
+                <li key={s.id}>
+                  <code>{s.id}</code>
+                  <span>{s.text}</span>
+                  <i aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* 02 · PROCESAMIENTO */}
+        <section id="soluciones" className="block">
+          <Node index="02" label="PROCESAMIENTO" />
+          <div className="block-head">
+            <h2>
+              Soluciones que procesan
+              <br />
+              <span className="dim">cada necesidad.</span>
+            </h2>
+            <p className="lead">
+              Módulos que se combinan según tu proyecto. Cada uno resuelve una parte; juntos forman el sistema.
+            </p>
+          </div>
+          <div className="modules">
+            {solutions.map((m) => (
+              <article key={m.id} className="module">
+                <div className="module-top">
+                  <code>{m.id}</code>
+                  <span className="module-led" aria-hidden="true" />
+                </div>
+                <h3>{m.title}</h3>
+                <p>{m.text}</p>
+                <ul className="tags">
+                  {m.tags.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* 03 · FLUJO */}
+        <section id="metodo" className="block">
+          <Node index="03" label="FLUJO" />
+          <div className="block-head">
+            <h2>
+              Un flujo claro,
+              <br />
+              <span className="dim">de la idea a la operación.</span>
+            </h2>
+          </div>
+          <ol className="flow">
+            {steps.map((s, i) => (
+              <li key={s.title}>
+                <span className="flow-pad">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* 04 · SALIDA */}
+        <section id="resultados" className="block">
+          <Node index="04" label="SALIDA" />
+          <div className="block-head">
+            <h2>
+              Lo que sale
+              <br />
+              <span className="dim">del circuito.</span>
+            </h2>
+            <p className="lead">El resultado no es solo un sistema: es una operación que funciona mejor.</p>
+          </div>
+          <div className="outputs">
+            {outputs.map((o) => (
+              <article key={o.id}>
+                <code>{o.id} →</code>
+                <h3>{o.title}</h3>
+                <p>{o.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* 05 · CONEXIÓN */}
+        <section id="contacto" className="block contact">
+          <Node index="05" label="CONEXIÓN" />
+          <div className="split">
+            <div>
+              <h2>
+                Conectemos tu
+                <br />
+                <em>próximo proyecto.</em>
+              </h2>
+              <p className="lead">Cuéntanos qué necesitas resolver y diseñamos el circuito contigo.</p>
+              <div className="channels">
+                {contact.email && (
+                  <a href={`mailto:${contact.email}`}>
+                    <Mail size={18} /> {contact.email}
+                  </a>
+                )}
+                {contact.whatsapp && (
+                  <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle size={18} /> WhatsApp
+                  </a>
+                )}
+              </div>
+            </div>
+            <ContactForm />
+          </div>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <img src="/almn-projects-logo.png" alt="ALMN Projects" width="397" height="143" loading="lazy" />
+        <p>Soluciones tecnológicas</p>
+        <a href="#inicio">↺ Volver al inicio del circuito</a>
+        <span>© {new Date().getFullYear()} ALMN PROJECTS</span>
+      </footer>
+    </>
+  );
 }
